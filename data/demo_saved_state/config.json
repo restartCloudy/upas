@@ -1,0 +1,12 @@
+{
+  "preprocessor": {
+    "zigzag_threshold": 0.05
+  },
+  "discovery": {
+    "min_pattern_freq": 3,
+    "max_clusters": 10
+  },
+  "evaluation": {
+    "min_samples": 3
+  }
+}

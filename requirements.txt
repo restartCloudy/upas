@@ -1,0 +1,13 @@
+# UPAS - 通用抽象形态系统
+# Universal Pattern Abstraction System
+
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+scipy>=1.7.0
+
+# 可选依赖（用于高级功能）
+# hmmlearn>=0.2.7          # HMM形态建模
+# fastdtw>=0.3.4           # DTW相似度计算
+# matplotlib>=3.5.0        # 可视化
+# plotly>=5.0.0            # 交互式图表

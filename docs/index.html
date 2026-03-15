@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPAS - 通用抽象形态系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+        
+        .server-config {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .server-config h3 {
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        
+        .config-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .config-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,212,255,0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-connected { background: #2ecc71; }
+        .status-disconnected { background: #e74c3c; }
+        .status-loading { background: #f39c12; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .stat-label {
+            color: #888;
+            margin-top: 8px;
+        }
+        
+        .section {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid #00d4ff;
+        }
+        
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .pattern-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .pattern-header {
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pattern-id {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .rating {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .rating-A { background: #2ecc71; color: #000; }
+        .rating-B { background: #3498db; color: #fff; }
+        .rating-C { background: #f39c12; color: #000; }
+        .rating-D { background: #e74c3c; color: #fff; }
+        
+        .pattern-chart {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pattern-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .pattern-stats {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .pattern-stat {
+            text-align: center;
+        }
+        
+        .pattern-stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .pattern-stat-label {
+            font-size: 0.85em;
+            color: #888;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #e74c3c;
+        }
+        
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #2ecc71;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>UPAS</h1>
+            <p class="subtitle">Universal Pattern Abstraction System - 通用抽象形态系统</p>
+        </header>
+
+        <!-- 服务器配置 -->
+        <div class="server-config">
+            <h3>
+                <span id="statusIndicator" class="status-indicator status-disconnected"></span>
+                服务器配置
+            </h3>
+            <div class="config-row">
+                <input type="text" id="serverUrl" placeholder="服务器地址: http://your-server:8080" value="">
+                <button class="btn" onclick="connectServer()">连接服务器</button>
+                <button class="btn btn-secondary" onclick="loadDemoData()">使用演示数据</button>
+            </div>
+            <div id="connectionStatus"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="patternCount">-</div>
+                <div class="stat-label">已发现形态</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestWinRate">-</div>
+                <div class="stat-label">最佳形态胜率</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="currentLevel">L3</div>
+                <div class="stat-label">当前复杂度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="expectancyScore">-</div>
+                <div class="stat-label">期望得分</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">形态库概览</h2>
+            <div class="pattern-grid" id="patternGrid">
+                <div class="pattern-card">
+                    <div class="pattern-header">
+                        <span class="pattern-id">等待数据...</span>
+                    </div>
+                    <div style="padding: 40px; text-align: center; color: #888;">
+                        请连接服务器或加载演示数据
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>UPAS v1.0 | 通用抽象形态系统</p>
+            <p style="margin-top: 8px;">
+                <a href="https://github.com/your-username/upas" style="color: #00d4ff; text-decoration: none;">GitHub</a> | 
+                <a href="#" style="color: #00d4ff; text-decoration: none;">文档</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 演示数据
+        const demoData = {
+            patterns: {
+                "L3-008": { prototype: generateWaveform(40, [0.4,1.3,0.7,0,-0.4,-0.8,-1.2,-0.9,-0.7,-0.5,0.1,0.5,1.5,0,-0.7,-0.9,-0.7,-0.5,-0.3,0,0.2,0.1,0,0.1,0.3,0.5,0.6,-1.1,-0.9,-0.7,-0.6,-0.5,-0.3,0.6,0.4,0.2,0,-0.2,-0.5,-1.0,0]), frequency: 4 },
+                "L3-001": { prototype: generateWaveform(35, [-1.2,-0.8,-0.5,-0.3,0,0.3,0.5,0.7,0.9,1.1,1.3,1.2,0.8,0.5,0.6,0.8,0.5,0.3,0,-0.3,-0.5,0,0.3,0.5,0.3,0,-0.3,-0.5,-0.3,0,1.2,-0.8,-0.5,0,1.0]), frequency: 8 },
+                "L3-005": { prototype: generateWaveform(35, [0.5,0.8,1.2,1.4,1.2,0.8,0.6,0.5,0.3,0,-0.3,-0.5,-0.8,-1.2,-1.4,-1.5,-1.3,-1.0,-0.8,-0.6,-0.5,0,0.3,0.5,-0.3,0.2,0.4,-0.5,-0.3,0,0.2,0,0.3,-0.2,0]), frequency: 3 },
+                "L3-006": { prototype: generateWaveform(35, [0,0.3,0.6,0.9,1.2,1.0,0.9,0.8,0.5,0.3,0,-0.3,-0.5,-0.3,-0.6,-0.9,-1.2,-1.3,-1.0,-0.7,-0.5,-0.3,0,0.8,0.5,0.3,0,-0.3,-0.5,-0.7,-0.9,-1.0,-0.5,-0.3,0]), frequency: 5 },
+                "L3-003": { prototype: generateWaveform(35, [1.0,0.8,0.5,0.3,0,-0.2,-0.5,-0.8,-1.0,-1.2,-1.0,-0.8,-0.5,-0.3,0,0.3,0.5,0.3,0.5,0,0.2,0,0.2,-0.2,0.4,-0.3,0.5,0.3,-0.3,0.4,0.8,0.5,0.3,0,-0.3]), frequency: 7 }
+            },
+            expectancy: {
+                "L3-008": { rating: "B", win_rate: 0.654, expectancy: 0.90, holding_days: 3 },
+                "L3-001": { rating: "B+", win_rate: 0.620, expectancy: 0.88, holding_days: 5 },
+                "L3-005": { rating: "A", win_rate: 0.612, expectancy: 0.76, holding_days: 5 },
+                "L3-006": { rating: "B+", win_rate: 0.576, expectancy: 0.73, holding_days: 10 },
+                "L3-003": { rating: "B", win_rate: 0.553, expectancy: 0.71, holding_days: 5 }
+            }
+        };
+
+        let currentData = null;
+        let serverBaseUrl = '';
+
+        function generateWaveform(length, keypoints) {
+            const result = [];
+            for (let i = 0; i < length; i++) {
+                const idx = Math.floor(i / length * keypoints.length);
+                result.push(keypoints[Math.min(idx, keypoints.length - 1)] + (Math.random() - 0.5) * 0.2);
+            }
+            return result;
+        }
+
+        function connectServer() {
+            const url = document.getElementById('serverUrl').value.trim();
+            if (!url) {
+                showError('请输入服务器地址');
+                return;
+            }
+
+            serverBaseUrl = url.replace(/\/$/, '');
+            const indicator = document.getElementById('statusIndicator');
+            indicator.className = 'status-indicator status-loading';
+
+            // 尝试连接服务器
+            fetch(`${serverBaseUrl}/api/patterns`)
+                .then(response => response.json())
+                .then(data => {
+                    currentData = data;
+                    updateUI(data);
+                    indicator.className = 'status-indicator status-connected';
+                    showSuccess('服务器连接成功！');
+                })
+                .catch(error => {
+                    indicator.className = 'status-indicator status-disconnected';
+                    showError('连接失败: ' + error.message);
+                });
+        }
+
+        function loadDemoData() {
+            currentData = demoData;
+            updateUI(demoData);
+            document.getElementById('statusIndicator').className = 'status-indicator status-connected';
+            showSuccess('已加载演示数据');
+        }
+
+        function updateUI(data) {
+            const patterns = data.patterns || {};
+            const expectancy = data.expectancy || {};
+
+            // 更新统计
+            document.getElementById('patternCount').textContent = Object.keys(patterns).length;
+            
+            let bestWinRate = 0;
+            let bestExpectancy = 0;
+            Object.values(expectancy).forEach(exp => {
+                if (exp.win_rate > bestWinRate) bestWinRate = exp.win_rate;
+                if (exp.expectancy > bestExpectancy) bestExpectancy = exp.expectancy;
+            });
+            
+            document.getElementById('bestWinRate').textContent = (bestWinRate * 100).toFixed(1) + '%';
+            document.getElementById('expectancyScore').textContent = bestExpectancy.toFixed(2);
+
+            // 排序并显示形态
+            const sortedPatterns = Object.entries(patterns)
+                .map(([id, info]) => ({ id, ...info, ...expectancy[id] }))
+                .sort((a, b) => (b.expectancy || 0) - (a.expectancy || 0));
+
+            renderPatternGrid(sortedPatterns);
+        }
+
+        function renderPatternGrid(patterns) {
+            const grid = document.getElementById('patternGrid');
+            grid.innerHTML = patterns.map(p => createPatternCard(p)).join('');
+        }
+
+        function createPatternCard(pattern) {
+            const svgPath = generateSVGPath(pattern.prototype);
+            const ratingClass = `rating-${pattern.rating || 'C'}`;
+            
+            return `
+                <div class="pattern-card">
+                    <div class="pattern-header">
+                        <span class="pattern-id">${pattern.id}</span>
+                        <span class="rating ${ratingClass}">${pattern.rating || 'N/A'}</span>
+                    </div>
+                    <div class="pattern-chart">
+                        <svg viewBox="0 0 300 150">
+                            <path d="${svgPath}" fill="none" stroke="#00d4ff" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="pattern-stats">
+                        <div class="pattern-stat">
+                            <div class="pattern-stat-value">${((pattern.win_rate || 0) * 100).toFixed(1)}%</div>
+                            <div class="pattern-stat-label">胜率</div>
+                        </div>
+                        <div class="pattern-stat">
+                            <div class="pattern-stat-value">${(pattern.expectancy || 0).toFixed(2)}%</div>
+                            <div class="pattern-stat-label">期望</div>
+                        </div>
+                        <div class="pattern-stat">
+                            <div class="pattern-stat-value">${pattern.frequency || 0}</div>
+                            <div class="pattern-stat-label">频率</div>
+                        </div>
+                        <div class="pattern-stat">
+                            <div class="pattern-stat-value">${pattern.holding_days || '-'}天</div>
+                            <div class="pattern-stat-label">持有期</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateSVGPath(data) {
+            if (!data || data.length === 0) return '';
+            
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
+            
+            const points = data.map((val, i) => {
+                const x = (i / (data.length - 1)) * 300;
+                const y = 150 - ((val - min) / range * 120 + 15);
+                return `${x},${y}`;
+            });
+            
+            return `M ${points.join(' L ')}`;
+        }
+
+        function showError(message) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+        }
+
+        function showSuccess(message) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.innerHTML = `<div class="success-message">✅ ${message}</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+        }
+
+        // 页面加载时自动加载演示数据
+        window.onload = function() {
+            loadDemoData();
+        };
+    </script>
+</body>
+</html>

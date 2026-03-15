@@ -1,0 +1,72 @@
+{
+  "L3-000": {
+    "expectancy": 0.5531158187423049,
+    "win_rate": 0.714650762812328,
+    "direction": "long",
+    "optimal_holding": 5,
+    "rating": "A"
+  },
+  "L3-001": {
+    "expectancy": 0.8790575654356125,
+    "win_rate": 0.6203161290415606,
+    "direction": "long",
+    "optimal_holding": 5,
+    "rating": "B+"
+  },
+  "L3-002": {
+    "expectancy": 0.4951946703698809,
+    "win_rate": 0.592056679780827,
+    "direction": "long",
+    "optimal_holding": 5,
+    "rating": "B+"
+  },
+  "L3-003": {
+    "expectancy": 0.7103598647755709,
+    "win_rate": 0.5525550183704269,
+    "direction": "long",
+    "optimal_holding": 5,
+    "rating": "B"
+  },
+  "L3-004": {
+    "expectancy": 0.3255706762170515,
+    "win_rate": 0.6869409853800275,
+    "direction": "long",
+    "optimal_holding": 10,
+    "rating": "A"
+  },
+  "L3-005": {
+    "expectancy": 0.7587173403777963,
+    "win_rate": 0.6117921059072814,
+    "direction": "long",
+    "optimal_holding": 5,
+    "rating": "A"
+  },
+  "L3-006": {
+    "expectancy": 0.7317492128688884,
+    "win_rate": 0.5764273840761052,
+    "direction": "long",
+    "optimal_holding": 10,
+    "rating": "B+"
+  },
+  "L3-007": {
+    "expectancy": 0.6310263971184401,
+    "win_rate": 0.5513557688795645,
+    "direction": "long",
+    "optimal_holding": 10,
+    "rating": "B+"
+  },
+  "L3-008": {
+    "expectancy": 0.8974360888946254,
+    "win_rate": 0.6538626093690659,
+    "direction": "long",
+    "optimal_holding": 3,
+    "rating": "B"
+  },
+  "L3-009": {
+    "expectancy": 0.5488445749722521,
+    "win_rate": 0.7069961003423678,
+    "direction": "long",
+    "optimal_holding": 3,
+    "rating": "B"
+  }
+}
